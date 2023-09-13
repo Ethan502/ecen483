@@ -115,10 +115,10 @@ class myPlot:
 def move_figure(f, x, y):
     """Move figure's upper left corner to pixel (x, y)"""
     figmgr = plt.get_current_fig_manager()
-    figmgr.canvas.manager.window.raise_()
-    geom = figmgr.window.geometry()
-    x,y,dx,dy = geom.getRect()
-    figmgr.window.setGeometry(10, 10, dx, dy)
+    # figmgr.canvas.manager.window.raise_()
+    # geom = figmgr.window.geometry()
+    # x,y,dx,dy = geom.getRect()
+    # figmgr.window.setGeometry(10, 10, dx, dy)
     # backend = get_backend()
     # if backend == 'TkAgg':
     #     f.canvas.manager.window.wm_geometry("+%d+%d" % (x, y))
