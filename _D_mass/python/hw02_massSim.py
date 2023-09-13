@@ -14,7 +14,7 @@ dataPlot = dataPlotter()
 animation = massAnimation()
 
 t = P.t_start
-while t < P.t_start:
+while t < P.t_end:
     #set the variables
     r = reference.square(t)
     d = distance.sin(t)
@@ -22,4 +22,10 @@ while t < P.t_start:
     # update the animation
     state = np.array([[d],[0.0]])
     animation.update(state)
-    dataPlot.update(t,r,state,)
+    dataPlot.update(t,r,state,tau)
+    t = t + P.t_plot
+    plt.pause(0.001)
+
+print('Press key to close')
+plt.waitforbuttonpress()
+plt.close()
