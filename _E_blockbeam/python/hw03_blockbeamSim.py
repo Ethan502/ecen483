@@ -7,7 +7,7 @@ from blockbeamDynamics import blockbeamDynamics
 
 blockbeam = blockbeamDynamics()
 reference = signalGenerator(amplitude=0.5, frequency=0.02)
-force = signalGenerator(amplitude=0.5, frequency=1)
+force = signalGenerator(amplitude=0.5, frequency=1,y_offset=11.5)
 
 dataPlot = dataPlotter()
 animation = blockbeamAnimation()
