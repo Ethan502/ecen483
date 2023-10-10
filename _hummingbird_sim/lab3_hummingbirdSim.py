@@ -10,6 +10,8 @@ from hummingbirdDynamics import HummingbirdDynamics
 phi_ref = SignalGenerator(amplitude=1.5, frequency=0.05)
 theta_ref = SignalGenerator(amplitude=0.5, frequency=0.05)
 psi_ref = SignalGenerator(amplitude=0.5, frequency=.05)
+force_1 = SignalGenerator(amplitude=10,frequency=1)
+force_2 = SignalGenerator(amplitude=10,frequency=1)
 
 # instantiate the simulation plots and animation
 dataPlot = DataPlotter()
@@ -23,10 +25,28 @@ while t < P.t_end:  # main simulation loop
     theta = 0#theta_ref.sin(t)
     psi = 0#psi_ref.sin(t)
     # update animation
-    state = hummingbird.state
-    ref = np.array([[0], [0], [0]])
-    force = 0
-    torque = 0
+    t = P.t_start
+while t < P.t_end:
+    t_next = t + P.t_plot
+
+    while t < t_next:
+        phi = phi_ref.sin(t)
+        theta = 0#theta_ref.sin(t)
+        psi = 0#psi_ref.sin(t)
+        u_1 = force_1.sin(t)
+        u_2 = force_2.sin(t)
+        u = np.array([[u_1],[u_2]])
+        state = hummingbird.state
+        y = hummingbird.update(u)
+        t = t + P.Ts
+        ref = np.array([[0], [0], [0]])
+        force = 0
+        torque = 0
+    
+    animation.update(state)
+    dataPlot.update(t,state,ref,force,torque)
+    plt.pause(0.0001)
+
     animation.update(t, state)
     dataPlot.update(t, state, ref, force, torque)
 
