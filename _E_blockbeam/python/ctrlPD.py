@@ -45,5 +45,9 @@ class ctrlPD:
 
         F = self.kp_th * (theta_ref - theta) - self.kd_th * thetadot
         Fe = P.m1*P.g*z / P.length + 0.5*P.m2*P.g
-        return F + Fe
+        return saturate(F + Fe,P.Fmax)
 
+def saturate(u, limit):
+    if abs(u) > limit:
+        u = limit * np.sign(u)
+    return u    

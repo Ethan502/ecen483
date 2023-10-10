@@ -65,9 +65,10 @@ class ctrlPD:
         F_tilde = self.kp_h * (h_r - h) - self.kd_h * hdot
 
         theta_ref = self.kp_z * (z_r - z) - self.kd_z * zdot
+        theta_ref = saturate(theta_ref, 10 * np.pi/180)
         tau = self.kp_th * (theta_ref - theta) - self.kd_th * thetadot
         tau = saturate(tau,P.fmax)
-        return np.array([[F_tilde + P.Fe], [tau]])
+        return np.array([[saturate(F_tilde + P.Fe,2*P.fmax)], [tau]])
 
 def saturate(u, limit):
     if abs(u) > limit:

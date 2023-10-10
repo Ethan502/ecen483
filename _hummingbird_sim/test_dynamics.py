@@ -1,7 +1,7 @@
 # use this file to test your dynamics file
 import numpy as np
-from hummingbirdDynamics import hummingbirdDynamics
-hummingbird = hummingbirdDynamics()
+from hummingbirdDynamics import HummingbirdDynamics
+hummingbird = HummingbirdDynamics()
 
 flag = True
 
@@ -29,6 +29,7 @@ if np.linalg.norm(hummingbird.state - true_state)>0.001:
     print("The state should be: \n", hummingbird.state.T)
     print("\n")
 
+
 # ------------------------------------
 initial_state = np.array([[0.], [1.], [0.], [0.], [0.], [1.]])
 input = np.array([[100.], [-100.]])
@@ -40,6 +41,7 @@ if np.linalg.norm(hummingbird.state - true_state)>0.001:
     flag = False
     print("The state should be: \n", hummingbird.state.T)
     print("\n")
+
 
 # ------------------------------------
 initial_state = np.array([[0.], [0.], [1.], [0.], [-1.], [-1.]])
@@ -64,6 +66,7 @@ if np.linalg.norm(hummingbird.state - true_state)>0.001:
     flag = False
     print("The state should be: \n", hummingbird.state.T)
     print("\n")
+
 
 # ------------------------------------
 initial_state = np.array([[-1.], [-10.], [0.], [1.], [50.], [5.]])
@@ -101,6 +104,7 @@ if np.linalg.norm(hummingbird.state - true_state)>0.001:
     print("The state should be: \n", hummingbird.state.T)
     print("\n")
 
+
 # ------------------------------------
 initial_state = np.array([[-1.], [2.], [-3.], [4.], [-5.], [6.]])
 input = np.array([[5.], [5.]])
@@ -124,6 +128,7 @@ if np.linalg.norm(hummingbird.state - true_state)>0.001:
     flag = False
     print("The state should be: \n", hummingbird.state.T)
     print("\n")
+
 
 if flag is True:
     print("\n\nCongrats!! \nYour dynamics file has passed all of the tests!\n")
