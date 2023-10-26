@@ -19,13 +19,6 @@ animation = HummingbirdAnimation()
 hummingbird = HummingbirdDynamics()
 
 t = P.t_start  # time starts at t_start
-while t < P.t_end:  # main simulation loop
-    # set variables
-    phi = phi_ref.sin(t)
-    theta = 0#theta_ref.sin(t)
-    psi = 0#psi_ref.sin(t)
-    # update animation
-    t = P.t_start
 while t < P.t_end:
     t_next = t + P.t_plot
 
@@ -43,15 +36,15 @@ while t < P.t_end:
         force = 0
         torque = 0
     
-    animation.update(state)
+    animation.update(t,state)
     dataPlot.update(t,state,ref,force,torque)
-    plt.pause(0.0001)
+    plt.pause(0.1)
 
     animation.update(t, state)
     dataPlot.update(t, state, ref, force, torque)
 
     t = t + P.t_plot  # advance time by t_plot
-    plt.pause(0.05)
+    plt.pause(0.5)
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')

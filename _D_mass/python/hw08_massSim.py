@@ -28,7 +28,7 @@ while t < P.t_end:
     animation.update(mass.state)
     dataPlot.update(t,r,mass.state,u)
 
-    plt.pause(0.0001)
+    plt.pause(0.01)
 
 print('Press key to close')
 plt.waitforbuttonpress()

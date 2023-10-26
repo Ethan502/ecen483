@@ -4,7 +4,7 @@ from signalGenerator import signalGenerator
 from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
 from blockbeamDynamics import blockbeamDynamics
-from ctrlPD import ctrlPD
+from ctrlPID import ctrlPID
 
 blockbeam = blockbeamDynamics()
 reference = signalGenerator(amplitude=0.15, frequency=0.1, y_offset=0.25)
@@ -12,7 +12,7 @@ force = signalGenerator(amplitude=0.5,frequency=1,y_offset=11.5)
 
 dataPlot = dataPlotter()
 animation = blockbeamAnimation()
-controller = ctrlPD()
+controller = ctrlPID()
 
 t = P.t_start
 while t < P.t_end:

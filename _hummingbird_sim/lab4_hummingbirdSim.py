@@ -21,40 +21,21 @@ hummingbird = HummingbirdDynamics()
 control = CtrlEquilibrium()
 
 t = P.t_start  # time starts at t_start
-while t < P.t_end:  # main simulation loop
-    # set variables
-    phi = phi_ref.sin(t)
-    theta = 0#theta_ref.sin(t)
-    psi = 0#psi_ref.sin(t)
-    # update animation
-    t = P.t_start
 while t < P.t_end:
     t_next = t + P.t_plot
 
     while t < t_next:
-        phi = phi_ref.sin(t)
-        theta = 0#theta_ref.sin(t)
-        psi = 0#psi_ref.sin(t)
-        u_1 = force_1.sin(t)
-        u_2 = force_2.sin(t)
-        u = np.array([[u_1],[u_2]])
-        state = hummingbird.state
+        u = control.update()
         y = hummingbird.update(u)
         t = t + P.Ts
-        ref = np.array([[0], [0], [0]])
-        control.update()
-        force = control.F
-        torque = control.tau
-    
-    animation.update(state)
+
+    ref = np.array([[0], [0], [0]])
+    force = (u[0][0] + u[1][0])*P.km
+    torque = control.tau
+    state = hummingbird.state
+    animation.update(t,state)
     dataPlot.update(t,state,ref,force,torque)
-    plt.pause(0.0001)
-
-    animation.update(t, state)
-    dataPlot.update(t, state, ref, force, torque)
-
-    t = t + P.t_plot  # advance time by t_plot
-    plt.pause(0.05)
+    plt.pause(0.1)
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')
