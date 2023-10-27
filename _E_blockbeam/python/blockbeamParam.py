@@ -34,3 +34,6 @@ Fmax = 15.0 # Max Force, N
 # equilibrium force when block is in center of beam
 ze = length/2
 Fe = m1*g*ze / length + 0.5*m2*g
+
+sigma = 0.05
+beta = (2.0*sigma - Ts) / (2.0*sigma + Ts)
