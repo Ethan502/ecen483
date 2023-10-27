@@ -2,7 +2,7 @@ import numpy as np
 import blockbeamParam as P
 
 class blockbeamDynamics:
-    def __init__(self, alpha=0.0):
+    def __init__(self, alpha=0.2):
         # Initial state conditions
         self.state = np.array([
             [P.z0],  # z initial position

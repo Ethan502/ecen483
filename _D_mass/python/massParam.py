@@ -27,3 +27,6 @@ t_plot = 0.1 # the plotting and animation is updated at this rate
 # saturation limits
 F_max = 6  # Max force, N
 
+sigma = 0.05
+beta = (2.0*sigma - Ts) / (2.0*sigma + Ts)
+

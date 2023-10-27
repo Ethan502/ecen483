@@ -4,7 +4,7 @@ from signalGenerator import signalGenerator
 from massAnimation import massAnimation
 from dataPlotter import dataPlotter
 from massDynamics import massDynamics
-from ctrlPD import ctrlPD
+from ctrlPID import ctrlPID
 
 mass = massDynamics()
 reference = signalGenerator(amplitude=0.01,frequency=0.1)
@@ -12,7 +12,7 @@ force = signalGenerator(amplitude=10, frequency=1)
 
 dataPlot = dataPlotter()
 animation = massAnimation()
-controller = ctrlPD()
+controller = ctrlPID()
 
 t = P.t_start
 while t < P.t_end:
@@ -20,8 +20,8 @@ while t < P.t_end:
 
     while t < t_next:
         r = reference.square(t)
-        state = mass.state
-        u = controller.update(r,state)
+        z = mass.state[0][0]
+        u = controller.update(r,z)
         y = mass.update(u)
         t = t + P.Ts
     

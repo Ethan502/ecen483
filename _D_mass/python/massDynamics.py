@@ -3,7 +3,7 @@ import massParam as P
 
 
 class massDynamics:
-    def __init__(self, alpha=0.0):
+    def __init__(self, alpha=0.2):
         # Initial state conditions
         self.state = np.array([
             [P.z0],      # initial angle
