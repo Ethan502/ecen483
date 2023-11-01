@@ -3,7 +3,7 @@ import blockbeamParam as P
 
 class ctrlPD:
     def __init__(self):
-        tr_th = 1
+        tr_th = 0.1
         zeta = 0.707
         M = 10
         wn_th = 2.2/tr_th

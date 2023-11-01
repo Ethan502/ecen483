@@ -5,7 +5,7 @@ from signalGenerator import signalGenerator
 from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
 from VTOLDynamics import VTOLDynamics
-from ctrlPD import ctrlPD
+from ctrlPID import ctrlPID
 
 
 vtol = VTOLDynamics()
@@ -13,7 +13,7 @@ z_reference = signalGenerator(amplitude=2.5, frequency=0.08, y_offset=3)
 h_reference = signalGenerator(amplitude=3, frequency=0.03,y_offset=5)
 dataPlot = dataPlotter()
 animation = VTOLAnimation()
-controller = ctrlPD()
+controller = ctrlPID()
 
 t = P.t_start
 while t < P.t_end:
@@ -23,10 +23,8 @@ while t < P.t_end:
         zref = z_reference.square(t)
         href = h_reference.square(t)
         state = vtol.state
-        u = controller.update(href,zref,state)
+        u = controller.update(href,zref,state[1][0],state[0][0],state[2][0])
         mixed = P.mixing @ (u)
-
-
         y = vtol.update(mixed)
         t = t + P.Ts
     

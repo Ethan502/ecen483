@@ -5,7 +5,7 @@ class ctrlPID:
     def __init__(self):
 
         # Inner Loop ___________________________________________________________________
-        tr_th = 1
+        tr_th = 0.3
         zeta = 0.707
         M = 10
         wn_th = 2.2/tr_th
@@ -40,7 +40,7 @@ class ctrlPID:
 
         self.kp_z = -alpha0_z / b0_z
         self.kd_z = -alpha1_z / b0_z
-        self.ki_z = 0.1
+        self.ki_z = 0.5
 
         print("Kp_z: ", self.kp_z)
         print("Kd_z: ", self.kd_z)
@@ -49,6 +49,10 @@ class ctrlPID:
 
 
     def update(self,z_r,z,theta):
+        # z = state[0][0]
+        # theta = state[1][0]
+        # zdot = state[2][0]
+        # thetadot = state[3][0]
 
         # Calculate Derivatives
         zdot = P.beta * self.zdot_delayed + (1-P.beta)/P.Ts * (z - self.z_delayed)
@@ -56,11 +60,11 @@ class ctrlPID:
 
         # Integrate Error
         error_z = (z_r - z)
-        #if np.abs(zdot) < 0.05:
-        self.error_sum = self.error_sum + P.Ts/2 * (error_z + self.error_z_prev)
+        if np.abs(zdot) < 0.05:
+            self.error_sum = self.error_sum + P.Ts/2 * (error_z + self.error_z_prev)
 
         # Do the PID on the theta_ref
-        theta_ref = self.kp_z * (z_r - z) - self.kd_z * zdot + self.ki_z * self.error_sum
+        theta_ref = self.kp_z * (z_r - z) - self.kd_z * zdot #+ self.ki_z * self.error_sum
 
         F = self.kp_th * (theta_ref - theta) - self.kd_th * thetadot
         Fe = P.m1*P.g*z / P.length + 0.5*P.m2*P.g

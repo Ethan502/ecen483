@@ -3,7 +3,7 @@ import VTOLParam as P
 
 class ctrlPD:
     def __init__(self):
-        tr_h = 8
+        tr_h = 3
         zeta = 0.707
         wn_h = 2.2/tr_h
 
@@ -21,7 +21,7 @@ class ctrlPD:
 
         # Inner Loop ----------------------------
 
-        tr_th = 0.8
+        tr_th = 0.1
         wn_th = 2.2 / tr_th
         b0_th = 1/(P.Jc + 2 * P.mr * (P.d**2))
         alpha1_th = 2 * zeta * wn_th

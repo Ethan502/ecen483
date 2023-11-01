@@ -41,3 +41,5 @@ Fe = (mc + 2*mr)*g
 # mixing matrix
 mixing = np.linalg.inv(np.array([[1.0, 1.0], [d, -d]]))
 
+sigma = 0.05
+beta = (2.0*sigma - Ts) / (2.0*sigma + Ts)

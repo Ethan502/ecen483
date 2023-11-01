@@ -7,7 +7,7 @@ from massDynamics import massDynamics
 from ctrlPD import ctrlPD
 
 mass = massDynamics()
-reference = signalGenerator(amplitude=0.01,frequency=0.1)
+reference = signalGenerator(amplitude=1.00,frequency=0.1)
 force = signalGenerator(amplitude=10, frequency=1)
 
 dataPlot = dataPlotter()

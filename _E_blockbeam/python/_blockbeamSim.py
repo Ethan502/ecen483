@@ -4,7 +4,7 @@ from signalGenerator import signalGenerator
 from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
 from blockbeamDynamics import blockbeamDynamics
-from ctrlPID import ctrlPID
+from testPID import ctrlPID
 
 blockbeam = blockbeamDynamics()
 reference = signalGenerator(amplitude=0.15, frequency=0.1, y_offset=0.25)
@@ -19,9 +19,8 @@ while t < P.t_end:
     t_next = t + P.t_plot
     while t < t_next:
         r = reference.square(t)
-        state = blockbeam.state
-        z = state[0][0]
-        theta = state[1][0]
+        z = blockbeam.state[0][0]
+        theta = blockbeam.state[1][0]
         u = controller.update(r,z,theta)
         y = blockbeam.update(u)
         t = t + P.Ts

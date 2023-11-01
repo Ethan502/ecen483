@@ -3,7 +3,7 @@ import massParam as P
 
 class ctrlPD:
     def __init__(self):
-        tr = 0.2
+        tr = 0.7
         zeta = 0.7
         wn = 2.2/tr
 

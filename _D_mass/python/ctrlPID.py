@@ -3,7 +3,7 @@ import massParam as P
 
 class ctrlPID:
     def __init__(self):
-        tr = 0.2
+        tr = 0.4
         zeta = 0.7
         wn = 2.2/tr
 
@@ -21,7 +21,7 @@ class ctrlPID:
         print('kd: ', self.kd)
 
         # Init variables for the PID control
-        self.ki = 0.1
+        self.ki = 1.2
         self.z_delayed = P.z0
         self.zdot_delayed = P.zdot0
         self.error_sum = 0.0
@@ -30,11 +30,18 @@ class ctrlPID:
 
     def update(self, z_r, z):
         zdot = P.beta * self.zdot_delayed + (1-P.beta)/P.Ts * (z - self.z_delayed)
+
+        # Integrator stuff
         error_z = (z_r - z)
         self.error_sum = self.error_sum + P.Ts/2 * (error_z + self.error_z_prev) 
 
-
+        # Use the PID contorl
         force = self.kp * (z_r - z) - self.kd * zdot + self.ki * self.error_sum
+
+        self.z_delayed = z
+        self.zdot_delayed = zdot
+        self.error_z_prev = error_z
+
         force = saturate(force,P.F_max)
         return force
 
