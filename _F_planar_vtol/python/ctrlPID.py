@@ -17,12 +17,11 @@ class ctrlPID:
         print("Kp_h: ", self.kp_h)
         print("Kd_h: ", self.kd_h)
 
-        self.ki_h = 0.35
+        self.ki_h = 0.75
         self.h_d1 = P.h0
         self.hdot = P.hdot0
         self.integrator_h = 0.0
         self.error_h_d1 = 0.0
-
 
         # Inner Loop ----------------------------
 
@@ -56,7 +55,7 @@ class ctrlPID:
         self.kp_z = alpha0_z / b0_z
         self.kd_z = (alpha1_z - a1) / b0_z
 
-        self.ki_z = 0.01
+        self.ki_z = 0.5
         self.z_d1 = P.z0
         self.zdot = P.zdot0
         self.integrator_z = 0.0
@@ -96,10 +95,10 @@ class ctrlPID:
         # PID control for z
         theta_r_unsat = self.kp_z * error_z + self.ki_z * self.integrator_z - self.kd_z * self.zdot
         # saturate theta
-        theta_r = saturate(theta_r_unsat,self.theta_max)
+        theta_r = saturate(theta_r_unsat,1.5*self.theta_max)
         # Anti-windup on the integrator
-        if self.ki_z != 0.0:
-            self.integrator_z = self.integrator_z + P.Ts / self.ki_z * (theta_r - theta_r_unsat)
+        # if self.ki_z != 0.0:
+        #     self.integrator_z = self.integrator_z + P.Ts / self.ki_z * (theta_r - theta_r_unsat)
         
         # ___________________Pitch Control______________________________
         # Error in theta
