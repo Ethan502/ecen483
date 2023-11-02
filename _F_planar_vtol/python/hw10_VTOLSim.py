@@ -18,14 +18,16 @@ controller = ctrlPID()
 t = P.t_start
 while t < P.t_end:
     t_next = t + P.t_plot
-
     while t < t_next:
         zref = z_reference.square(t)
         href = h_reference.square(t)
-        state = vtol.state
-        u = controller.update(href,zref,state[1][0],state[0][0],state[2][0])
-        mixed = P.mixing @ (u)
-        y = vtol.update(mixed)
+        n = np.array([[0.0],[0.0],[0.0]])
+        d = np.array([[0.0],[0.0]])
+        z = vtol.state[0][0]
+        h = vtol.state[1][0]
+        theta = vtol.state[2][0]
+        u = controller.update(href,zref,z,h,theta)
+        y = vtol.update(u + d)
         t = t + P.Ts
     
     animation.update(vtol.state)
