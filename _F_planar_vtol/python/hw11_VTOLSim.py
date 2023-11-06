@@ -5,17 +5,18 @@ from signalGenerator import signalGenerator
 from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
 from VTOLDynamics import VTOLDynamics
-from ctrlPID import ctrlPID
+from ctrlStateFeedback import ctrlStateFeedback
 
 
-vtol = VTOLDynamics(alpha=0.2)
+vtol = VTOLDynamics(alpha=0.0)
 z_reference = signalGenerator(amplitude=2.5, frequency=0.08, y_offset=3)
 h_reference = signalGenerator(amplitude=3, frequency=0.03,y_offset=5)
 dataPlot = dataPlotter()
 animation = VTOLAnimation()
-controller = ctrlPID()
+controller = ctrlStateFeedback()
 
 t = P.t_start
+y = vtol.h()
 while t < P.t_end:
     t_next = t + P.t_plot
     while t < t_next:
@@ -23,10 +24,7 @@ while t < P.t_end:
         href = h_reference.square(t)
         n = np.array([[0.0],[0.0],[0.0]])
         d = np.array([[0.0],[0.0]])
-        z = vtol.state[0][0]
-        h = vtol.state[1][0]
-        theta = vtol.state[2][0]
-        u = controller.update(href,zref,z,h,theta)
+        u = controller.update(href,zref,vtol.state)
         y = vtol.update(u + d)
         t = t + P.Ts
     
