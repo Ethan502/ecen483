@@ -3,6 +3,9 @@ import matplotlib.patches as mpatches
 import numpy as np
 import VTOLParam as P
 
+import matplotlib
+matplotlib.use('wxagg')  # requires wxPython
+
 
 class VTOLAnimation:
     def __init__(self):
