@@ -4,7 +4,7 @@ import numpy as np
 import VTOLParam as P
 
 import matplotlib
-matplotlib.use('wxagg')  # requires wxPython
+#matplotlib.use('wxagg')  # requires wxPython
 
 
 class VTOLAnimation:
