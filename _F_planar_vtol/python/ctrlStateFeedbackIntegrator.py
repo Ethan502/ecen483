@@ -41,12 +41,21 @@ class ctrlStateFeedbackIntegrator:
         
         Cr_lat = np.array([[1.0, 0.0, 0.0, 0.0]])
 
-        A1_lat = np.vstack((
-                np.hstack((A_lat, np.zeros((4,1)))),
-                np.hstack((-Cr_lat, np.zeros((1,1))))
-                ))
+        A1_lat = np.array([[0.0,0.0,1.0,0.0,0.0],
+                           [0.0,0.0,0.0,1.0,0.0],
+                           [0.0,-P.Fe/j,-P.mu/j,0.0,0.0],
+                           [0.0,0.0,0.0,0.0,0.0],
+                           [-1.0, 0.0, 0.0, 0.0,0.0]])
         
-        B1_lat = np.vstack((B_lat, np.zeros((1,1))))
+        B1_lat = np.array([[0.0],
+                           [0.0],
+                           [0.0],
+                           [1/(P.Jc+2*P.mr*P.d**2)],
+                           [0.0]
+                      ])
+        
+        print(f"A1_lat: {A1_lat}")
+        print(f"A1_lat: {B1_lat}")
 
         
         # Longitude matrices
@@ -57,12 +66,16 @@ class ctrlStateFeedbackIntegrator:
         C_long = np.array([[1.0,0.0]])
         Cr_long = np.array([[1.0, 0.0, 0.0, 0.0]])
 
-        A1_long = np.vstack((
-                np.hstack((A_long, np.zeros((4,1)))),
-                np.hstack((-Cr_long, np.zeros((1,1))))
-                ))
+        A1_long = np.array([[0.0,1.0,0.0],
+                            [0.0,0.0,0.0],
+                            [-1.0,0.0,0.0]])
         
-        B1_long = np.vstack((B_long, np.zeros((1,1))))
+        B1_long = np.array([[0.0],
+                            [1/j],
+                            [0.0]])
+        
+        print(f"A1_long: {A1_long}")
+        print(f"B1_long: {B1_long}")
 
 
         des_char_poly_long = np.convolve([1, 2 * zeta_h * wn_h,wn_h**2],np.poly(pI_long))
@@ -75,23 +88,23 @@ class ctrlStateFeedbackIntegrator:
         des_poles_lat = np.roots(des_char_poly_lat)
 
         # Compute the gains if the system is controllable for lat control
-        if np.linalg.matrix_rank(cnt.ctrb(A1_lat, B1_lat)) != 4:
+        if np.linalg.matrix_rank(cnt.ctrb(A1_lat, B1_lat)) != 5:
             print("The system is not controllable")
         else:
             K1 = cnt.place(A1_lat,B1_lat,des_poles_lat)
-            self.K_lat = K1[0][0:4]
-            self.ki_lat = K1[0][4]
+            self.K_lat = K1[0][0:5]
+            self.ki_lat = K1[0][5]
         # print gains to terminal
         print('K_lat: ', self.K_lat)
         print('ki_lat: ', self.ki_lat)
 
         # Compute the gains of system if controllable for long control
-        if np.linalg.matrix_rank(cnt.ctrb(A1_long, B1_long)) != 2:
+        if np.linalg.matrix_rank(cnt.ctrb(A1_long, B1_long)) != 3:
             print("The system is not controllable")
         else:
             K1 = cnt.place(A1_long, B1_long, des_poles_long)
-            self.K_long = K1[0][0:4]
-            self.ki_long = K1[0][4]
+            self.K_long = K1[0][0:3]
+            self.ki_long = K1[0][3]
         # print gains to terminal
         print('K_long: ', self.K_long)
         print('ki_long: ', self.ki_long)
