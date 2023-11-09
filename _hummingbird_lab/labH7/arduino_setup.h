@@ -37,7 +37,7 @@
 #define PIN_MOTOR_RIGHT_PWM 10  // timer1 PWM pin
 
 // arming switch
-The arm, zero, and calibration buttons are attached to these pins
+// The arm, zero, and calibration buttons are attached to these pins
 #define ARM_SWITCH 2          // Pins 2 and 3 are hardware interrupt pins
 #define ZERO_SWITCH 4         // Pin to the button that should zero the encoders
 #define CALIBRATION_SWITCH 5  // Pin to the button that should calibrate the ESCs

@@ -13,7 +13,7 @@ class ctrlLonPID:
         #print('b_theta: ', b_theta)
         wn_pitch = 2.2 / tr_pitch
         self.kp_pitch = (wn_pitch**2)/b_theta
-        self.kd_pitch = (2.0 * zeta_pitch * wn_pitch)/b_theta 
+        self.kd_pitch = (2.0 * zeta_pitch * wn_pitch)/b_theta
         # print gains to terminal
         print('kp_pitch: ', self.kp_pitch)
         print('ki_pitch: ', self.ki_pitch)
@@ -24,25 +24,25 @@ class ctrlLonPID:
         sigma = 0.05  # cutoff freq for dirty derivative
         self.beta = (2 * sigma - self.Ts) / (2 * sigma + self.Ts)
         # delayed variables
-        self.theta_d1 = 0.
-        self.theta_dot = 0.
+        self.theta_d1 = P.theta0
+        self.theta_dot = P.thetadot0
         self.integrator_theta = 0.
         self.error_theta_d1 = 0.  # pitch error delayed by 1
 
     def update(self, r, y):
-        theta_ref = r[0][0]
+        theta_ref = r[1][0]
         theta = y[1][0]
         force_fl = (P.m1*P.ell1 + P.m2*P.ell2)*(P.g/P.ellT)*np.cos(theta)
         # compute errors
         error_theta = theta_ref - theta
         # update differentiators
-        self.theta_dot = self.beta * self.theta_d1 + (1-self.beta)/P.Ts * (theta - self.theta_d1)
+        self.theta_dot = self.beta * self.theta_dot + (1-self.beta)/P.Ts * (theta - self.theta_d1)
         
         # update integrators
         self.integrator_theta = 0
         
         # pitch control
-        force_unsat = error_theta * self.kp_pitch - self.kd_pitch * self.theta_dot
+        force_unsat = force_fl + (error_theta * self.kp_pitch - self.kd_pitch * self.theta_dot)
         force = saturate(force_unsat, -P.force_max, P.force_max)
         torque = 0.
         # convert force and torque to pwm signals
