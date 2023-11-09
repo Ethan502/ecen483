@@ -7,10 +7,10 @@ from dataPlotter import dataPlotter
 from massDynamics import massDynamics
 from ctrlStateFeedbackIntegrator import ctrlStateFeedbackIntegrator
 
-mass = massDynamics(alpha=0)
+mass = massDynamics(alpha=0.2)
 controller = ctrlStateFeedbackIntegrator()
 reference = signalGenerator(amplitude=1,frequency=0.05)
-disturbance = signalGenerator(amplitude=0.1)
+disturbance = signalGenerator(amplitude=0.25)
 
 dataPlot = dataPlotter()
 animation = massAnimation()
@@ -23,10 +23,9 @@ while t < P.t_end:
 
     while t < t_next_plot:
         r = reference.square(t)
-        d = disturbance.square(t)
+        d = disturbance.step(t)
         n = 0.0
         u = controller.update(r,mass.state)
-        print(f"The u: {u}")
         y = mass.update(u[0] + d)
         t = t + P.Ts
 

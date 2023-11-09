@@ -4,10 +4,10 @@ import massParam as P
 
 class ctrlStateFeedbackIntegrator:
     def __init__(self):
-        tr = 1
+        tr = 1.0
         zeta = 0.707
         w_n = 2.2/tr
-        pI = np.array([0.1])
+        pI = np.array([-0.62])
 
         A = np.array([[0.0,1.0],
                       [-P.k/P.m,-1.0*P.b/P.m]])
@@ -20,12 +20,19 @@ class ctrlStateFeedbackIntegrator:
         des_poles = np.roots(des_char_poly)
 
         # Augment the matrices
-        A1 = np.array([[0.0,1.0,0.0],
-                       [-P.k/P.m,-1.0*P.b/P.m,0.0],
-                       [1.0,0.0,0.0]])
-        B1 = np.array([[0.0],
-                       [1/P.m],
-                       [0.0]])
+        # A1 = np.array([[0.0,1.0,0.0],
+        #                [-P.k/P.m,-1.0*P.b/P.m,0.0],
+        #                [1.0,0.0,0.0]])
+        # B1 = np.array([[0.0],
+        #                [1/P.m],
+        #                [0.0]])
+        
+        A1 = np.vstack((np.hstack((A, np.zeros((np.size(A,1),1)))), 
+                        np.hstack((-C, np.array([[0.0]]))) ))
+        B1 = np.vstack( (B, 0.0) )
+
+        print(A1)
+        print(B1)
 
         # Find the gains, but only if the system in controllable
         if np.linalg.matrix_rank(cnt.ctrb(A1,B1)) != np.size(A1,1):
