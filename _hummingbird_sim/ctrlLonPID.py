@@ -4,6 +4,10 @@ import hummingbirdParam as P
 
 class ctrlLonPID:
     def __init__(self):
+
+        #######################################################################################
+        #                               Longitude Control                                     #
+        #######################################################################################
         # tuning parameters
         tr_pitch = 0.5
         zeta_pitch = 0.707
@@ -29,22 +33,54 @@ class ctrlLonPID:
         self.integrator_theta = 0.
         self.error_theta_d1 = 0.  # pitch error delayed by 1
 
+        #######################################################################################
+        #                               Latitude Control                                      #
+        #######################################################################################
+        
+        # ---------------------- INNER LOOP (ROLL)-----------------------------------
+        tr_phi = 0.8
+        zeta_phi = 0.707
+        self.ki_phi = 0
+        # gain calculations
+        wn_phi = 2.2 / tr_phi
+        self.kp_phi = (wn_phi**2)*P.J1x
+        self.kd_phi = (2 * zeta_phi * wn_phi)*P.J1x
+        print('kp_phi: ', self.kp_phi)
+        print('ki_phi: ', self.ki_phi)
+        print('kd_phi: ', self.kd_phi)
+        # delayed variables
+        self.phi_d1 = P.phi0
+        self.phi_dot = P.phidot0
+        self.integrator_phi = 0.0
+        self.error_phi_d1 = 0.0 
+
+
+
     def update(self, r, y):
+        phi_ref = r[0][0]
         theta_ref = r[1][0]
+        phi = y[0][0]
         theta = y[1][0]
         force_fl = (P.m1*P.ell1 + P.m2*P.ell2)*(P.g/P.ellT)*np.cos(theta)
         # compute errors
         error_theta = theta_ref - theta
+        error_phi = phi_ref - phi
         # update differentiators
         self.theta_dot = self.beta * self.theta_dot + (1-self.beta)/P.Ts * (theta - self.theta_d1)
+        self.phi_dot = self.beta * self.phi_dot + (1-self.beta)/P.Ts * (phi - self.phi_d1)
         
         # update integrators
+        self.integrator_theta = 0
         self.integrator_theta = 0
         
         # pitch control
         force_unsat = force_fl + (error_theta * self.kp_pitch - self.kd_pitch * self.theta_dot)
         force = saturate(force_unsat, -P.force_max, P.force_max)
-        torque = 0.
+
+        # Torque control
+        torque_unsat = self.kp_phi * error_phi - self.kd_phi * self.phi_dot
+        torque = saturate(torque_unsat, P.torque_max)
+
         # convert force and torque to pwm signals
         pwm = np.array([[force + torque / P.d],               # u_left
                       [force - torque / P.d]]) / (2 * P.km)   # r_right          
@@ -52,8 +88,10 @@ class ctrlLonPID:
         # update all delayed variables
         self.theta_d1 = theta
         self.error_theta_d1 = error_theta
+        self.phi_d1 = phi
+        self.error_phi_d1 = error_phi
         # return pwm plus reference signals
-        return pwm, np.array([[0.], [theta_ref], [0.]])
+        return pwm, np.array([[phi_ref], [theta_ref], [0.]])
 
 
 def saturate(u, low_limit, up_limit):

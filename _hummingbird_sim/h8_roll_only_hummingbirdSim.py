@@ -33,7 +33,7 @@ while t < P.t_end:  # main simulation loop
     dataPlot.update(t, hummingbird.state, y_ref, u)
 
     # the pause causes figure to be displayed during simulation
-    plt.pause(0.0001)
+    plt.pause(0.01)
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')
