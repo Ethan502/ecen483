@@ -2,7 +2,7 @@ import numpy as np
 import control as cnt
 import armParam as P
 
-class ctrlDisturbanceObserver :
+class ctrlDisturbanceObserver:
     def __init__(self):
         #--------------------------------------------------
         # State Feedback Control Design

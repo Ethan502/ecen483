@@ -19,14 +19,6 @@ class ctrlStateFeedbackIntegrator:
         des_char_poly = np.convolve([1,2*zeta*w_n,w_n**2],np.poly(pI))
         des_poles = np.roots(des_char_poly)
 
-        # Augment the matrices
-        # A1 = np.array([[0.0,1.0,0.0],
-        #                [-P.k/P.m,-1.0*P.b/P.m,0.0],
-        #                [1.0,0.0,0.0]])
-        # B1 = np.array([[0.0],
-        #                [1/P.m],
-        #                [0.0]])
-        
         A1 = np.vstack((np.hstack((A, np.zeros((np.size(A,1),1)))), 
                         np.hstack((-C, np.array([[0.0]]))) ))
         B1 = np.vstack( (B, 0.0) )

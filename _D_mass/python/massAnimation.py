@@ -13,7 +13,7 @@ matplotlib.use('qtagg')  # requires pyqt or pyside
 # matplotlib.use('gtk3cairo')  # requires pyGObject and pycairo
 # matplotlib.use('gtk4cairo')  # requires pyGObject and pycairo
 # matplotlib.use('tkagg')  # requires TkInter
-#matplotlib.use('wxagg')  # requires wxPython
+matplotlib.use('wxagg')  # requires wxPython
 
 
 class massAnimation:
