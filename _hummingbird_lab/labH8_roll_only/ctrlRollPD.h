@@ -11,9 +11,9 @@
 #include <math.h>
 
 struct {
-  float kp_phi = 
-  float kd_phi = 
-  float km = 
+  float kp_phi = 0.091476;
+  float kd_phi = 0.020479412;
+  float km = 0.284;
 } gains;
 
 #include "tuning_utilities.h"
@@ -40,7 +40,7 @@ static struct {
   float J3z = 0.000027;
   float d = 0.12;
   float fe = (m1*ell1+m2*ell2)*g/ellT;  
-  float force_max = 0.1;
+  float force_max = 2.0;
 } P;
 
 // reference structure the reference signals for psi and theta
@@ -87,15 +87,15 @@ class CtrlRollPD {
       float phi_dot = 3*phi_dot_d1 - 3*phi_dot_d2 + phi_dot_d3;
 
       // compute feedback linearized force      
-      float force_fl = 
+      float force_fl = (P.m1 * P.ell1 + P.m2 * P.ell2) * (P.g/P.ellT);
                          
       // compute error
-      float error_phi = 
+      float error_phi = phi_ref - phi;
 
       // roll control
-      float torque = 
+      float torque = gains.kp_phi * error_phi - gains.kd_phi * phi_dot;
                                             
-      float force = 
+      float force = force_fl;
       
       // convert force and torque to pwm and send to motors
       float left_pwm = (force+torque/P.d)/(2.0*gains.km);

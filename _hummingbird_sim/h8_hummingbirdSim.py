@@ -8,7 +8,7 @@ from hummingbirdDynamics import HummingbirdDynamics
 from ctrlPID import ctrlPID
 
 # instantiate pendulum, controller, and reference classes
-hummingbird = HummingbirdDynamics(alpha=0.1)
+hummingbird = HummingbirdDynamics(alpha=0.2)
 controller = ctrlPID()
 psi_ref = SignalGenerator(amplitude=30.*np.pi/180., frequency=0.02)
 theta_ref = SignalGenerator(amplitude=15.*np.pi/180., frequency=0.05)
@@ -30,11 +30,14 @@ while t < P.t_end:  # main simulation loop
         t = t + P.Ts  # advance time by Ts
 
     # update animation and data plots at rate t_plot
-    animation.update(t, hummingbird.state)
-    dataPlot.update(t, hummingbird.state, y_ref, u)
+    state = hummingbird.state
+    force = (u[0][0] + u[1][0])*P.km
+    torque = (u[0][0] - u[1][0])*P.d
+    animation.update(t,state)
+    dataPlot.update(t,state,y_ref,force,torque)
 
     # the pause causes figure to be displayed during simulation
-    plt.pause(0.0001)
+    plt.pause(0.001)
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')
