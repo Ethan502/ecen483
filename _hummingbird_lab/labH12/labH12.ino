@@ -45,9 +45,9 @@ void loop()
   Reference reference;
   timing.update();  // update current time and sample rate
   sensors.update();  // update sensors
-  reference.psi = yaw_reference.square_signal(timing.current);
+  //reference.psi = yaw_reference.square_signal(timing.current);
   reference.theta = pitch_reference.square_signal(timing.current);
-  //reference.psi = yaw_reference.joystick_yaw();
+  reference.psi = yaw_reference.joystick_yaw();
   //reference.theta = pitch_reference.joystick_pitch();
   controller.update(reference, sensors, rotors, timing.Ts);  
 

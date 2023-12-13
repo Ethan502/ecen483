@@ -5,15 +5,15 @@
 #include <math.h>
 
 struct {
-  float kp_phi = 0.091476;
-  float kd_phi = 0.020479412;
-  float kp_psi = 0.7370847;
-  float kd_psi = 0.473744;
-  float ki_psi = 0.0001;
+  float kp_phi = 0.010164; //0.091476;
+  float kd_phi = 0.002059804; //0.020479412;
+  float kp_psi = 0.308; // 0.7370847;
+  float kd_psi = 0.238; // 0.473744;
+  float ki_psi = 0.01;
   float kp_theta = 0.686381121089803;
-  float ki_theta = -0.01;
+  float ki_theta = 0.02;
   float kd_theta = 0.2205779330047685;
-  float km = 0.3430;
+  float km = 0.365;
 } gains;
 
 #include "tuning_utilities.h"
@@ -113,17 +113,22 @@ class CtrlLatPID {
       float theta_dot = 3*theta_dot_d1 - 3*theta_dot_d2 + theta_dot_d3;     
 
       // compute feedback linearized loop
-      float force_fl = (P.m1*P.ell1 + P.m2*P.ell2)*(P.g/P.ellT)*cos(theta);
+      float force_fl = P.fe*cos(theta);
 
       //------------------------------------------------------------------
       float error_theta = theta_ref - theta;
       
       // update integrator 
-      float integrator_theta = integrator_theta + (Ts/2.0) * (error_theta + error_theta_d1);
+      integrator_theta = integrator_theta + (Ts/2.0) * (error_theta + error_theta_d1);
       
       // pitch control
       float f_tilde = gains.kp_theta * error_theta - gains.kd_theta * theta_dot + gains.ki_theta * integrator_theta;         
       float force = force_fl + f_tilde;
+      //float force = saturate(unsat_force, -P.force_max, P.force_max);
+      Serial.print("Force_fl:");
+      Serial.print(force_fl);
+      Serial.print("Theta");
+      Serial.println(theta);
 
       //------------------------------------------------------------------
 
@@ -136,10 +141,11 @@ class CtrlLatPID {
       // Inner Loop
       float error_phi = phi_ref - phi;
       float torque = gains.kp_phi * error_phi - gains.kd_phi * phi_dot;
+      //float torque = 0.0;
       
       
       // convert force and torque to pwm and send to motors
-      float left_pwm = (force+torque/P.d)/(2.0*gains.km);
+      float left_pwm = (force+torque/P.d)/(1.85*gains.km);
       float right_pwm = (force-torque/P.d)/(2.0*gains.km);
       rotors.update(left_pwm, right_pwm); 
 
@@ -152,14 +158,22 @@ class CtrlLatPID {
       psi_dot_d2 = psi_dot_d1;      
       error_psi_d1 = error_psi;
 
-      error_theta_d1 = error_theta;
       error_psi_d1 = error_psi;
+
+      theta_d3 = theta_d2;
+      theta_d2 = theta_d1;
+      theta_dot_d3 = theta_dot_d2;
+      theta_dot_d2 = theta_dot_d1;
+      error_theta_d1 = error_theta;
+
+
+      
       // print commanded values
-      Serial.print("Psi_ref:");
-      Serial.print(psi_ref*180/PI);
-      Serial.print(",");
-      Serial.print("Psi:");
-      Serial.println(psi*180/PI);
+      //Serial.print("Psi_ref:");
+      //Serial.print(psi_ref*180/PI);
+      //Serial.print(",");
+      //Serial.print("Psi:");
+      //Serial.println(psi*180/PI);
 //      Serial.print(",");      
 //      Serial.print("Phi_ref:");
 //      Serial.println(phi_ref*180/PI);

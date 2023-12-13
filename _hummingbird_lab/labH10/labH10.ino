@@ -31,7 +31,7 @@ void setup()
   timing.init();  // initialize current time and sample rate
   sensors.init();  // initialize sensors
   controller.init();  // initialize controller
-  signal_generator.init(30*3.14/180, 0.05, 0.0);
+  signal_generator.init(15*3.14/180, 0.1, 0.0);
 
   // initialize buttons on breakout board and watchdog timers
   initialize_buttons();
@@ -44,7 +44,7 @@ void loop()
 {
   timing.update();  // update current time and sample rate
   sensors.update();  // update sensors
-  float theta_ref = signal_generator.square_signal(timing.current);
+  float theta_ref = signal_generator.joystick_pitch();
   float psi_ref = signal_generator.joystick_yaw();
   controller.update(theta_ref,psi_ref, sensors, rotors, timing.Ts);  // update controller
 

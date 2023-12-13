@@ -128,11 +128,11 @@ class CtrlLonPID {
       theta_dot_d2 = theta_dot_d1;
       error_theta_d1 = error_theta;
       // print stuff to the Arduino plotter/monitor for debugging
-      Serial.print("Theta_ref:");
-      Serial.print(theta_ref*180/PI);
-      Serial.print(",");
-      Serial.print("Theta:");
-      Serial.println(theta*180/PI);
+      //Serial.print("Theta_ref:");
+      //Serial.print(theta_ref*180/PI);
+      //Serial.print(",");
+      //Serial.print("Theta:");
+      //Serial.println(theta*180/PI);
 //      Serial.print(",");
 //      Serial.print("Theta_dot:");
 //      Serial.print(theta_dot*180/PI);

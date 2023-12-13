@@ -8,15 +8,15 @@
 #include <math.h>
 
 struct {
-  float wn_th = 
-  float zeta_th = 
-  float pi_lon = 
-  float wn_phi = 
-  float zeta_phi = 
-  float wn_psi = 
-  float zeta_psi = 
-  float pi_lat = 
-  float km = 
+  float wn_th = 2.5;
+  float zeta_th = 0.707;
+  float pi_lon = 4.0;
+  float wn_phi = 10.0;
+  float zeta_phi = 0.707;
+  float wn_psi = 1.6;
+  float zeta_psi = 0.707;
+  float pi_lat = 1.0;
+  float km = 0.3300;
 } gains;
 
 #include "tuning_utilities.h"
@@ -44,7 +44,7 @@ static struct {
   float d = 0.12;
   float JT = m1*pow(ell1,2)+m2*pow(ell2,2)+J2z+m3*(pow(ell3x,2)+pow(ell3y,2));
   float fe = (m1*ell1+m2*ell2)*g/ellT;  
-  float force_max = 0.1;
+  float force_max = 2.0;
   float b_theta = ellT/(m1*pow(ell1,2)+m2*pow(ell2,2)+J1y+J2y);
 } P;
 
@@ -106,24 +106,31 @@ class CtrlStateFeedbackIntegrator {
       // tune gains
       tuneGains();
       
-      float alpha1_lon = 
-      float alpha2_lon = 
-      float alpha3_lon = 
-      float k_theta = 
-      float k_thetadot = 
-      float ki_lon = 
-      float alpha1_lat = 
-      float alpha2_lat = 
-      float alpha3_lat = 
-      float alpha4_lat = 
-      float alpha5_lat = 
+      float alpha1_lon = gains.pi_lon+2*gains.zeta_th*gains.wn_th;
+      float alpha2_lon = 2*gains.zeta_th*gains.wn_th*gains.pi_lon+pow(gains.wn_th,2);
+      float alpha3_lon = pow(gains.wn_th,2)*gains.pi_lon;
+      float k_theta = alpha2_lon/P.b_theta;
+      float k_thetadot = alpha1_lon/P.b_theta;
+      float ki_lon = -alpha3_lon/P.b_theta;
+      float alpha1_lat = 2*gains.zeta_phi*gains.wn_phi+2*gains.zeta_psi*gains.wn_psi + gains.pi_lat;
+      float alpha2_lat = gains.pi_lat*(2*gains.zeta_phi*gains.wn_phi+2*gains.zeta_psi*gains.wn_psi)
+                          + pow(gains.wn_phi,2)+pow(gains.wn_psi,2)
+                          + 4*gains.zeta_phi*gains.zeta_psi*gains.wn_phi*gains.wn_psi;
+      float alpha3_lat = gains.pi_lat*(pow(gains.wn_phi,2)+pow(gains.wn_psi,2)
+                        + 4*gains.zeta_phi*gains.zeta_psi*gains.wn_phi*gains.wn_psi)
+                        + 2*gains.zeta_phi*gains.wn_phi*pow(gains.wn_psi,2)
+                        + 2*gains.zeta_psi*gains.wn_psi*pow(gains.wn_phi,2);
+      float alpha4_lat = gains.pi_lat*(2*gains.zeta_phi*gains.wn_phi*pow(gains.wn_psi,2)
+                        + 2*gains.zeta_psi*gains.wn_psi*pow(gains.wn_phi,2))
+                        + pow(gains.wn_phi,2)*pow(gains.wn_psi,2);
+      float alpha5_lat = gains.pi_lat*pow(gains.wn_phi,2)*(gains.wn_psi,2);
       float b1 = 1/P.J1x;
       float a1 = P.ellT*P.fe/(P.JT+P.J1z);
-      float k_phi = 
-      float k_psi = 
-      float k_phidot = 
-      float k_psidot = 
-      float ki_lat = 
+      float k_phi = alpha2_lat/b1;
+      float k_psi = alpha4_lat/(a1*b1);
+      float k_phidot = alpha1_lat/b1;
+      float k_psidot = alpha3_lat/(a1*b1);
+      float ki_lat = -alpha5_lat/(a1*b1);
       
       // compute theta and theta_dot (with quadratic prediction)
       float theta_d1 = sensors.pitch;
@@ -142,17 +149,19 @@ class CtrlStateFeedbackIntegrator {
 
       theta = sensors.pitch;
       // compute feedback linearized force      
-      float force_fl = 
+      float force_fl = P.g * (P.m1 * P.ell1 + P.m2 * P.ell2) / P.ellT;
       // compute error
       float error_lon = reference.theta - theta;      
       float error_lat = reference.psi - psi; 
       // update integrator 
-      integrator_lon +=   
-      integrator_lat += 
+      integrator_lon += (Ts / 2) * (error_lon + error_lon_d1);
+      integrator_lat += (Ts / 2) * (error_lat + error_lat_d1);
       // longitudinal control
-      float force =                      
-      // lateral control
-      float torque = 
+      float force_tilde_unsat = -k_theta * theta - k_thetadot * theta_dot - ki_lon * integrator_lon;
+      float force_tilde = saturate(force_tilde_unsat,-P.force_max, P.force_max);
+      float force = force_tilde + force_fl;
+      // lateral controltheta_dot
+      float torque = - k_phi * phi - k_psi * psi - k_phidot * phi_dot - k_psidot * psi_dot - ki_lat * integrator_lat;
       // convert force and torque to pwm and send to motors
       float left_pwm = (force+torque/P.d)/(2.0*gains.km);
       float right_pwm = (force-torque/P.d)/(2.0*gains.km);
