@@ -31,7 +31,9 @@ while t < P.t_end:  # main simulation loop
 
     # update animation and data plots at rate t_plot
     animation.update(t, hummingbird.state)
-    dataPlot.update(t, hummingbird.state, y_ref, u)
+    force = (u[0][0] + u[1][0])*P.km
+    torque = (u[0][0] - u[1][0])*P.d
+    dataPlot.update(t, hummingbird.state, y_ref, force, torque)
 
     # the pause causes figure to be displayed during simulation
     plt.pause(0.0001)

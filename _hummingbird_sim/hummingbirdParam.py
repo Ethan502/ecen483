@@ -42,4 +42,5 @@ torque_max = 5.0                # Max torque, Nm
 
 Fe = (m1*ell1 + m2*ell2)*(g/ellT)
 JT = (m1*ell1**2) + (m2*ell2**2) + J2z + m3*(ell3x**2 + ell3y**2)
+b_theta = ellT / (m1 * ell1**2 + m2 * ell2**2 + J1y + J2y)
 
